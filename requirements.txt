@@ -1,0 +1,23 @@
+-There must be a playing "field". 
+    -The field shall have a size.
+    -The field shall have a background color.
+    -The field shall have a border. 
+-There must be two players.
+    -They shall be called player one and player two.
+    -A random player shall start with the ball.
+-The players shall be illustrated by a classing pong player "line". 
+-There shall be a ball.
+    -The ball shall be round and with a fill color.
+    -The ball shall hit the walls and bounce in angles.
+    -The ball hitting the opposing goal will gain a point for the player.
+-There must be a winning condition.
+    -The current winning condition shall be first player to reach 10 points. 
+    -After the winning condition is achieved there must be a choise to play again or not. 
+    -After winning the player shall be congratualted by a splash graphic.
+-There must be a choise to start the game.
+
+Questions:
+-Shall there be AI players?
+-How will human players communicate?
+-How will human players arrange a game?  
+   
