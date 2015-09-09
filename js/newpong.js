@@ -1,5 +1,5 @@
-var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate;
-var player = new Paddle(100, 100, false);
+var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate,speed=3;
+var player = new Paddle(0, 0, false);
 var ai = new Paddle(0, WIDTH - 40, true);
 
 
@@ -33,12 +33,10 @@ function main() {
 function draw() {
     ctx.fillStyle = "#f0f";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.save();
+    
     ctx.fillStyle = "#000";
     
     player.draw();
-    
-    
     ai.draw();
     // draw the net
     var w = 4;
@@ -53,9 +51,14 @@ function draw() {
 }
 
 function update() {
+    if(keystate[DownArrow]){
+        player.update(player.y+speed);
+    }else if(keystate[UpArrow]){
+        player.update(player.y-speed);
+    }
     
-    player.update();
-    ai.update();
+    
+    //ai.update();
 }
 
 
@@ -68,10 +71,11 @@ function Paddle(x, y, ai) {
     this.isAi = ai;
     this.draw = function () {
         ctx.fillRect(this.x, this.y, this.width, this.height);
-       
+        console.log("x" + this.x + "y" + this.y + "width" +this.width + "height"+this.height);
     };
     this.update = function (y) {
-        this.y = y;
+        
+        this.y=y;
         this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
     };
 }
