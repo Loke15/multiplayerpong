@@ -54,7 +54,7 @@ and open the template in the editor.
                     <p>Pong</p>
                 </div>
                 <div class="col-sm-4">
-                   
+                    
                 </div>
                 
             </div>   

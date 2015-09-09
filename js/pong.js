@@ -24,7 +24,7 @@ $(document).ready(function(){
         
         function init()
 	{
-		d = "right"; //default direction
+		d = "up"; //default direction
 		create_player();
 		
 		//Lets move the snake now using a timer which will trigger the paint function
@@ -62,8 +62,15 @@ $(document).ready(function(){
 		//These were the position of the head cell.
 		//We will increment it to get the new head position
 		//Lets add proper direction based movement now
-		if(d == "down") ny++;
-		else if(d == "up") ny--;
+            ctx.fillStyle="black";
+            ctx.fillRect(10,100,200,200);
+            if(d == "down") {
+                ny++;
+                
+            }
+		else if(d == "up") {
+                    ny--;
+                }
             
             
             
@@ -77,11 +84,12 @@ $(document).ready(function(){
 		{
 			var c = player[i];
 			//Lets paint 10px wide cells
-			ctx.fillStyle = "#4444ff";
-			ctx.fillRect(c.x*10+100, c.y*10+100, 10, 10);
-                       
+			ctx.fillStyle = "#000000";
+			ctx.fillRect(c.x*10+100, c.y*10+100, 10, 10);   
 		}
                 
+                
+             
                 
 	}
 	
@@ -90,6 +98,8 @@ $(document).ready(function(){
 		var key = e.which;
 		if(key == "38") d = "up";
 		else if(key == "40") d = "down";
+                
+                
 		
 	})
         
