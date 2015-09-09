@@ -5,7 +5,11 @@ var ball = new Ball();
 //X,Y
 
 function init() {
-
+        player.x = player.width;
+	player.y = (HEIGHT - player.height)/2;
+	ai.x = WIDTH - (player.width + ai.width);
+	ai.y = (HEIGHT - ai.height)/2;
+	ball.serve(1);
 }
 function main() {
     // create, initiate and append game canvas
@@ -23,6 +27,8 @@ function main() {
         delete keystate[evt.keyCode];
     });
     init(); // initiate game objects
+    //
+    /*
     // game loop function
     var loop = function () {
         update();
@@ -30,6 +36,12 @@ function main() {
         window.requestAnimationFrame(loop, canvas);
     };
     window.requestAnimationFrame(loop, canvas);
+    */
+   function loop() {
+   update();
+   draw();
+}
+setInterval(loop, 10);
 }
 function draw() {
     ctx.fillStyle = "#f0f";
@@ -89,12 +101,30 @@ function Paddle(x, y, ai) {
 function Ball() {
     this.x = WIDTH / 2;
     this.y = HEIGHT / 2;
-    this.velx=3;
-    this.vely=3;
+    this.velx=null;
+    this.vely=null;
     
     this.side = 20;
-    this.speed = 7;
-
+    this.speed = 3;
+    
+    
+    
+    this.serve = function(side){
+       
+		// set the x and y position
+		var r = Math.random();
+		this.x = side===1 ? player.x+player.width : ai.x - this.side;
+		this.y = (HEIGHT - this.side)*r;
+		// calculate out-angle, higher/lower on the y-axis =>
+		// steeper angle
+		var phi = 0.1*pi*(1 - 2*r);
+		// set velocity direction and magnitude
+		
+			this.velx=side*this.speed*Math.cos(phi);
+			this.vely= this.speed*Math.sin(phi);
+		
+	};
+    
     this.draw = function () {
         ctx.fillRect(this.x, this.y, this.side, this.side);
     }
@@ -123,8 +153,7 @@ function Ball() {
                 if (AABBIntersect(pdle.x, pdle.y, pdle.width, pdle.height,
 				this.x, this.y, this.side, this.side)
 		) {
-            this.velx=3;
-            this.vely=3;
+            
 			// set the x position and calculate reflection angle
 			this.x = pdle===player ? player.x+player.width : ai.x - this.side;
 			var n = (this.y+this.side - pdle.y)/(pdle.height+this.side);
@@ -138,12 +167,13 @@ function Ball() {
 		// reset the ball when ball outside of the canvas in the
 		// x direction
 		if (0 > this.x+this.side || this.x > WIDTH) {
-			this.x = WIDTH / 2;
-                        this.y = HEIGHT / 2;
+			this.serve(pdle===player ? 1 : -1);
 		}
 
-    }
+    
 }
+}
+
 
 
 $(document).ready(function () {
