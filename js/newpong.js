@@ -1,8 +1,9 @@
 var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 3;
-var player = new Paddle(0, 0, false);
-var ai = new Paddle(WIDTH - 40, HEIGHT / 2, true);
+var player = new Paddle(0, 0, 10, 10, false);
+var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 300, true);
 var baller = [];
 var antballer = 5;
+var closest = 0;
 for (var i = 0; i < antballer; i++) {
     baller[i] = new Ball();
 
@@ -78,51 +79,53 @@ function draw() {
 }
 
 function update() {
-    if (keystate[DownArrow]) {
-        player.update(player.y + speed);
-        //ai.update(ai.y - speed);
-    } else if (keystate[UpArrow]) {
-        player.update(player.y - speed);
-        //ai.update(ai.y + speed);
-    }
-    
-    
+    player.update();
+    ai.update();
+
     //ball.update();
 
 
-    var closest=0;
+    closest = 0;
 
     for (var i = 0; i < antballer; i++) {
-        if(baller[i].x>closest){
-           closest=baller[i].y; // ta vare på y verdien til den nærmeste ballen for AI
+        if (baller[i].x > closest) {
+            closest = baller[i].y; // ta vare på y verdien til den nærmeste ballen for AI
         }
         baller[i].update();
 
     }
-    if(ai.y>=closest){
-        ai.update(ai.y - 50);
-    }else{
-        ai.update(ai.y + 50);
-    }
-    
+
+
 }
 
 
 
-function Paddle(x, y, ai) {
+function Paddle(x, y, width, height, ai) {
     this.x = x;
     this.y = y;
-    this.width = 40;
-    this.height = 200;
+    this.width = width;
+    this.height = height;
     this.isAi = ai;
     this.draw = function () {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         //console.log("x" + this.x + "y" + this.y + "width" + this.width + "height" + this.height);
     };
-    this.update = function (y) {
+    this.update = function () {
+        if (this.isAi) {
+            var desty = closest - (this.height - baller[0].side) * 0.5;
+            // ease the movement towards the ideal position
+            this.y += (desty - this.y) * 0.1;
+            // keep the paddle inside of the canvas
+            this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
 
-        this.y = y;
-        this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
+        } else {
+            if (keystate[UpArrow])
+                this.y -= 7;
+            if (keystate[DownArrow])
+                this.y += 7;
+            // keep the paddle inside of the canvas
+            this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
+        }
     };
 }
 
@@ -154,7 +157,14 @@ function Ball() {
     };
 
     this.draw = function () {
-        ctx.fillRect(this.x, this.y, this.side, this.side);
+        if (this.y < closest+10 && this.y > closest-10) {
+            ctx.fillStyle = "#f00";
+            ctx.fillRect(this.x, this.y, this.side, this.side);
+        } else {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(this.x, this.y, this.side, this.side);
+        }
+        ctx.fillStyle = "#000";
     }
     this.update = function () {
         // update position with current velocity
