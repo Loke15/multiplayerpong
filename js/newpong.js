@@ -1,9 +1,10 @@
-var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 3;
-var player = new Paddle(0, 0, 10, 10, false);
+var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 1;
+var player = new Paddle(0, 0, 10, 600, false);
 var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 300, true);
 var baller = [];
 var antballer = 5;
-var closest = 0;
+var closestx = 0;
+var closesty= 0;
 for (var i = 0; i < antballer; i++) {
     baller[i] = new Ball();
 
@@ -85,11 +86,13 @@ function update() {
     //ball.update();
 
 
-    closest = 0;
-
-    for (var i = 0; i < antballer; i++) {
-        if (baller[i].x > closest) {
-            closest = baller[i].y; // ta vare på y verdien til den nærmeste ballen for AI
+    closestx = baller[0].x;
+    closesty = baller[0].y;
+    for (var i = 1; i < antballer; i++) {
+        if (baller[i].x >= closestx) {
+            closestx = baller[i].x;
+            closesty = baller[i].y;
+             // ta vare på y verdien til den nærmeste ballen for AI
         }
         baller[i].update();
 
@@ -112,7 +115,7 @@ function Paddle(x, y, width, height, ai) {
     };
     this.update = function () {
         if (this.isAi) {
-            var desty = closest - (this.height - baller[0].side) * 0.5;
+            var desty = closesty - (this.height - baller[0].side) * 0.5;
             // ease the movement towards the ideal position
             this.y += (desty - this.y) * 0.1;
             // keep the paddle inside of the canvas
@@ -136,7 +139,7 @@ function Ball() {
     this.vely = null;
 
     this.side = 20;
-    this.speed = 5;
+    this.speed = 2;
 
 
 
@@ -157,14 +160,12 @@ function Ball() {
     };
 
     this.draw = function () {
-        if (this.y < closest+10 && this.y > closest-10) {
+        if (this.y < closesty+10 && this.y > closesty-10) {
             ctx.fillStyle = "#f00";
             ctx.fillRect(this.x, this.y, this.side, this.side);
-        } else {
+        }
             ctx.fillStyle = "#000";
             ctx.fillRect(this.x, this.y, this.side, this.side);
-        }
-        ctx.fillStyle = "#000";
     }
     this.update = function () {
         // update position with current velocity
