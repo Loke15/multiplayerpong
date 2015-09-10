@@ -88,7 +88,7 @@ function update() {
 
     closestx = baller[0].x;
     closesty = baller[0].y;
-    for (var i = 1; i < antballer; i++) {
+    for (var i = 0; i < antballer; i++) {
         if (baller[i].x >= closestx) {
             closestx = baller[i].x;
             closesty = baller[i].y;
