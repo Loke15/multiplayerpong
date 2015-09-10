@@ -1,8 +1,8 @@
-var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 1;
+var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 1, scores;
 var player = new Paddle(0, 0, 10, 600, false);
-var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 300, true);
+var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 50, true);
 var baller = [];
-var antballer = 15000;
+var antballer = 1000;
 var closestx = 0;
 var closesty= 0;
 for (var i = 0; i < antballer; i++) {
@@ -53,7 +53,7 @@ function main() {
         update();
         draw();
     }
-    setInterval(loop, 3);
+    setInterval(loop, 10);
 }
 function draw() {
     ctx.fillStyle = "#f0f";
@@ -89,7 +89,7 @@ function update() {
     closestx = baller[0].x;
     closesty = baller[0].y;
     for (var i = 0; i < antballer; i++) {
-        if (baller[i].x >= closestx) {
+        if (baller[i].x >= closestx && baller[i].velx>0) {
             closestx = baller[i].x;
             closesty = baller[i].y;
              // ta vare på y verdien til den nærmeste ballen for AI
@@ -109,14 +109,18 @@ function Paddle(x, y, width, height, ai) {
     this.width = width;
     this.height = height;
     this.isAi = ai;
+    this.points=0;
     this.draw = function () {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         //console.log("x" + this.x + "y" + this.y + "width" + this.width + "height" + this.height);
     };
     this.update = function () {
         if (this.isAi) {
+                         //600           100             30 = 565
             var desty = closesty - (this.height - baller[0].side) * 0.5;
+            
             // ease the movement towards the ideal position
+            //         565-30=535 535*0.1= 53,5
             this.y += (desty - this.y) * 0.1;
             // keep the paddle inside of the canvas
             this.y = Math.max(Math.min(this.y, HEIGHT - this.height), 0);
@@ -137,9 +141,9 @@ function Ball() {
     this.y = HEIGHT / 2;
     this.velx = null;
     this.vely = null;
-
-    this.side = 1;
-    this.speed = 5;
+    
+    this.side = 3;
+    this.speed = speed;
 
 
 
@@ -168,7 +172,7 @@ function Ball() {
             ctx.fillRect(this.x, this.y, this.side, this.side);
         }
             ctx.fillStyle = "#000";
-    }
+    };
     this.update = function () {
         // update position with current velocity
         this.x += this.velx;
@@ -207,8 +211,17 @@ function Ball() {
 
         // reset the ball when ball outside of the canvas in the
         // x direction
-        if (0 > this.x + this.side || this.x > WIDTH) {
+        if (0 > this.x + this.side) {
+            
             this.serve(pdle === player ? 1 : -1);
+            ai.points++;
+            scores.innerHTML = player.points + " - " + ai.points;
+        }else if( this.x > WIDTH){
+            
+            this.serve(pdle === player ? 1 : -1);
+            player.points++;
+            scores.innerHTML = player.points + " - " + ai.points;
+            
         }
 
 
@@ -219,6 +232,7 @@ function Ball() {
 
 $(document).ready(function () {
     main();
+    scores = document.getElementById('scores');
 
 });
 

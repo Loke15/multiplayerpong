@@ -27,6 +27,6 @@ and open the template in the editor.
     <body>
 
         
-
+        <div id="scores">Scores</div>
     </body>
 </html>
