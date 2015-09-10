@@ -2,7 +2,7 @@ var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canva
 var player = new Paddle(0, 0, 10, 600, false);
 var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 300, true);
 var baller = [];
-var antballer = 5;
+var antballer = 15000;
 var closestx = 0;
 var closesty= 0;
 for (var i = 0; i < antballer; i++) {
@@ -53,7 +53,7 @@ function main() {
         update();
         draw();
     }
-    setInterval(loop, 16);
+    setInterval(loop, 3);
 }
 function draw() {
     ctx.fillStyle = "#f0f";
@@ -138,8 +138,8 @@ function Ball() {
     this.velx = null;
     this.vely = null;
 
-    this.side = 20;
-    this.speed = 2;
+    this.side = 1;
+    this.speed = 5;
 
 
 
@@ -163,9 +163,11 @@ function Ball() {
         if (this.y < closesty+10 && this.y > closesty-10) {
             ctx.fillStyle = "#f00";
             ctx.fillRect(this.x, this.y, this.side, this.side);
-        }
+        }else{
             ctx.fillStyle = "#000";
             ctx.fillRect(this.x, this.y, this.side, this.side);
+        }
+            ctx.fillStyle = "#000";
     }
     this.update = function () {
         // update position with current velocity
