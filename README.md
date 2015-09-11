@@ -16,3 +16,9 @@ To begin with the name of the player will be the IP adress the player is connect
 
 
 The server needs:
+A method to recieve input from user and transmit it back to the users(movement of paddle)
+A method that moves ball position in the game and controls it within the borders of the game WIDTH/HEIGHT.
+A method that decides which screen that shall be shown to the user ( Connect to play, Spectate game).
+
+
+
