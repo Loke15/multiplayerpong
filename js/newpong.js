@@ -1,16 +1,15 @@
 var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 5, scores;
 var player = new Paddle(0, 0, 10, 100, false);
 var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 50, true);
-var ball =  new Ball();
-var closestx = 0;
-var closesty= 0;
+var ball = new Ball();
+var url = "ws://localhost:8080";
+var socket;
 
-    
+
 
 
 
 //X,Y
-
 function init() {
     player.x = player.width;
     player.y = (HEIGHT - player.height) / 2;
@@ -34,16 +33,7 @@ function main() {
         delete keystate[evt.keyCode];
     });
     init(); // initiate game objects
-    //
-    /*
-     // game loop function
-     var loop = function () {
-     update();
-     draw();
-     window.requestAnimationFrame(loop, canvas);
-     };
-     window.requestAnimationFrame(loop, canvas);
-     */
+
     function loop() {
         update();
         draw();
@@ -59,7 +49,7 @@ function draw() {
     ball.draw();
     player.draw();
     ai.draw();
-    
+
     // draw the net
     var w = 4;
     var x = (WIDTH - w) * 0.5;
@@ -71,6 +61,26 @@ function draw() {
     }
     ctx.restore();
 }
+function connect() {
+    socket = new WebSocket(url, "echo-protocol");
+
+    socket.addEventListener("open", function () {
+
+        socket.send("Connected");
+        console.log("Connected");
+    });
+
+    /*
+     socket.addEventListener("error", function (event) {
+     alert("Error");
+     });
+     */
+    socket.addEventListener("message", function (event) {
+
+        console.log(event.data);
+    });
+
+}
 
 function update() {
     player.update();
@@ -79,7 +89,7 @@ function update() {
     ball.update();
 
 
-    
+
 
 
 }
@@ -92,16 +102,16 @@ function Paddle(x, y, width, height, ai) {
     this.width = width;
     this.height = height;
     this.isAi = ai;
-    this.points=0;
+    this.points = 0;
     this.draw = function () {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         //console.log("x" + this.x + "y" + this.y + "width" + this.width + "height" + this.height);
     };
     this.update = function () {
         if (this.isAi) {
-                         //600           100             30 = 565
+            //600           100             30 = 565
             var desty = ball.y - (this.height - ball.side) * 0.5;
-            
+
             // ease the movement towards the ideal position
             //         565-30=535 535*0.1= 53,5
             this.y += (desty - this.y) * 0.1;
@@ -124,7 +134,7 @@ function Ball() {
     this.y = HEIGHT / 2;
     this.velx = null;
     this.vely = null;
-    
+
     this.side = 30;
     this.speed = speed;
 
@@ -147,9 +157,9 @@ function Ball() {
     };
 
     this.draw = function () {
-            ctx.fillRect(this.x, this.y, this.side, this.side);
-        
-            ctx.fillStyle = "#000";
+        ctx.fillRect(this.x, this.y, this.side, this.side);
+
+        ctx.fillStyle = "#000";
     };
     this.update = function () {
         // update position with current velocity
@@ -190,16 +200,16 @@ function Ball() {
         // reset the ball when ball outside of the canvas in the
         // x direction
         if (0 > this.x + this.side) {
-            
+
             this.serve(pdle === player ? 1 : -1);
             ai.points++;
             scores.innerHTML = player.points + " - " + ai.points;
-        }else if( this.x > WIDTH){
-            
+        } else if (this.x > WIDTH) {
+
             this.serve(pdle === player ? 1 : -1);
             player.points++;
             scores.innerHTML = player.points + " - " + ai.points;
-            
+
         }
 
 
@@ -209,10 +219,16 @@ function Ball() {
 
 
 $(document).ready(function () {
-    
+
     canvas = document.getElementById('canvas');
     scores = document.getElementById('scores');
-main();
+    main();
+    connect();
+});
+
+$(document).unload(function () {
+
+    socket.close();
 });
 
 
