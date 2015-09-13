@@ -28,5 +28,6 @@ and open the template in the editor.
 
         
         <div id="scores">Scores</div>
+         <canvas id="canvas">Scores</canvas>
     </body>
 </html>

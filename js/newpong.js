@@ -1,14 +1,13 @@
-var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 1, scores;
-var player = new Paddle(0, 0, 10, 600, false);
+var WIDTH = 700, HEIGHT = 600, pi = Math.PI, UpArrow = 38, DownArrow = 40, canvas, ctx, keystate, speed = 5, scores;
+var player = new Paddle(0, 0, 10, 100, false);
 var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 50, true);
-var baller = [];
-var antballer = 1000;
+var ball =  new Ball();
 var closestx = 0;
 var closesty= 0;
-for (var i = 0; i < antballer; i++) {
-    baller[i] = new Ball();
 
-}
+    
+
+
 
 //X,Y
 
@@ -17,19 +16,15 @@ function init() {
     player.y = (HEIGHT - player.height) / 2;
     ai.x = WIDTH - (player.width + ai.width);
     ai.y = (HEIGHT - ai.height) / 2;
-    for (var i = 0; i < antballer; i++) {
-        baller[i].serve(1);
-
-    }
+    ball.serve(1);
 
 }
 function main() {
     // create, initiate and append game canvas
-    canvas = document.createElement("canvas");
     canvas.width = WIDTH;
     canvas.height = HEIGHT;
     ctx = canvas.getContext("2d");
-    document.body.appendChild(canvas);
+    //document.body.appendChild(canvas);
     keystate = {};
     // keep track of keyboard presses
     document.addEventListener("keydown", function (evt) {
@@ -61,12 +56,10 @@ function draw() {
 
     ctx.fillStyle = "#000";
 
-    for (var i = 0; i < antballer; i++) {
-        baller[i].draw();
-
-    }
+    ball.draw();
     player.draw();
     ai.draw();
+    
     // draw the net
     var w = 4;
     var x = (WIDTH - w) * 0.5;
@@ -83,20 +76,10 @@ function update() {
     player.update();
     ai.update();
 
-    //ball.update();
+    ball.update();
 
 
-    closestx = baller[0].x;
-    closesty = baller[0].y;
-    for (var i = 0; i < antballer; i++) {
-        if (baller[i].x >= closestx && baller[i].velx>0) {
-            closestx = baller[i].x;
-            closesty = baller[i].y;
-             // ta vare på y verdien til den nærmeste ballen for AI
-        }
-        baller[i].update();
-
-    }
+    
 
 
 }
@@ -117,7 +100,7 @@ function Paddle(x, y, width, height, ai) {
     this.update = function () {
         if (this.isAi) {
                          //600           100             30 = 565
-            var desty = closesty - (this.height - baller[0].side) * 0.5;
+            var desty = ball.y - (this.height - ball.side) * 0.5;
             
             // ease the movement towards the ideal position
             //         565-30=535 535*0.1= 53,5
@@ -142,7 +125,7 @@ function Ball() {
     this.velx = null;
     this.vely = null;
     
-    this.side = 3;
+    this.side = 30;
     this.speed = speed;
 
 
@@ -164,13 +147,8 @@ function Ball() {
     };
 
     this.draw = function () {
-        if (this.y < closesty+10 && this.y > closesty-10) {
-            ctx.fillStyle = "#f00";
             ctx.fillRect(this.x, this.y, this.side, this.side);
-        }else{
-            ctx.fillStyle = "#000";
-            ctx.fillRect(this.x, this.y, this.side, this.side);
-        }
+        
             ctx.fillStyle = "#000";
     };
     this.update = function () {
@@ -231,9 +209,10 @@ function Ball() {
 
 
 $(document).ready(function () {
-    main();
+    
+    canvas = document.getElementById('canvas');
     scores = document.getElementById('scores');
-
+main();
 });
 
 
