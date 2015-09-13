@@ -4,6 +4,7 @@ var ai = new Paddle(WIDTH - 40, HEIGHT / 2, 10, 50, true);
 var ball = new Ball();
 var url = "ws://localhost:8080";
 var socket;
+var connected=false;
 
 
 
@@ -70,14 +71,21 @@ function connect() {
         console.log("Connected");
     });
 
-    /*
+    
      socket.addEventListener("error", function (event) {
-     alert("Error");
+     alert("To many connected clients");
      });
-     */
+     
     socket.addEventListener("message", function (event) {
-
-        console.log(event.data);
+        
+           if(event.data==1 || !connected){
+               main();
+               //alert("you are connected and can play");
+               connected=true;
+           }else{
+               //alert("you are not connected");
+           } 
+        
     });
 
 }
@@ -222,7 +230,7 @@ $(document).ready(function () {
 
     canvas = document.getElementById('canvas');
     scores = document.getElementById('scores');
-    main();
+    
     connect();
 });
 
