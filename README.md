@@ -10,7 +10,7 @@ A method to tell the server that the player is ready for a game.
 A method to tell the server that it wants to spectate a game.
 A method to recieve input from the server that comes from the other player
 To begin with the name of the player will be the IP adress the player is connected from.s
-
+s
 
 
 
